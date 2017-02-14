@@ -1,0 +1,67 @@
+package Problems2;
+
+import java.util.*;
+
+/**
+ * Created by ramon on 13.02.2017.
+ * Given an array of 100,000 numbers, find the maximum number of unique integers among all the possible 
+ * contiguous subarrays of size m.
+ * Time limit: 3 seconds
+ */
+
+public class ContiguousSAU {
+    
+    public static void main(String[] args) {
+        
+        Scanner scanner = new Scanner(System.in);
+        int arraySize = scanner.nextInt();
+        int subarraySize = scanner.nextInt();
+        
+        //The problem can efficiently be solved with HashMap
+        // - the keys will be the integers of the array
+        // - the value will be the number of times the number appears in the array
+        //As such, the size of the map will give us the number of unique elements in any given subarray
+        //
+        //In order to keep in the map only a subbarray of the given size, we remove (decrement) from the 
+        //map the first elements that were put in, in the introduction order. For this purpose
+        //an ArrayList was created.
+        //
+        //The problem is time efficient as there is only one iteration through the array of numbers:
+        //they are processed when they are read. 
+       
+        Map<Integer, Integer> map = new HashMap();
+        List<Integer> array = new ArrayList<>();
+
+        int finalMax = 0, currentMax = 0;
+        
+        for (int i = 0; i < arraySize; i++) {
+            int num = scanner.nextInt();
+            array.add(num);
+            if (i > subarraySize - 1) {
+                int numToRemove = array.get(i - subarraySize);
+                removeFromMap(map, numToRemove);
+            }
+            putInMap(map, num);
+            currentMax = map.size();
+            if (currentMax > finalMax) finalMax = currentMax;
+        }
+
+        System.out.println(finalMax);
+    }
+
+    private static void removeFromMap(Map<Integer, Integer> map, int numToRemove) {
+        if (map.get(numToRemove) == 1) {
+            map.remove(numToRemove);
+        } else {
+            map.replace(numToRemove, map.get(numToRemove) - 1);
+        }
+    }
+
+    private static void putInMap(Map<Integer, Integer> map, int num) {
+        if (map.get(num) != null) {
+            map.replace(num, map.get(num) + 1);
+        } else {
+            map.put(num, 1);
+        }
+    }
+}
